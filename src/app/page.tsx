@@ -32,7 +32,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-white">
       <header className="border-b border-black px-6 py-4">
         <div className="mx-auto max-w-4xl">
-          <h1 className="text-xl font-normal">lift</h1>
+          <h1 className="text-xl font-normal">lift.news</h1>
         </div>
       </header>
 
