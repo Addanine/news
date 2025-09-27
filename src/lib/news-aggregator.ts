@@ -307,6 +307,7 @@ export async function fetchFromNYT(): Promise<Article[]> {
 
 function cleanArticleContent(rawContent: string): string {
   let content = rawContent;
+  console.log(content)
   
   // Remove everything before "Markdown Content:" if it exists
   const markdownStart = content.indexOf('Markdown Content:');
@@ -315,7 +316,7 @@ function cleanArticleContent(rawContent: string): string {
   }
   
   // Remove navigation elements and common website cruft
-  const linesToRemove = [
+  const linesToRemove:RegExp[] = [
     /^Title:.*$/gm,
     /^URL Source:.*$/gm,
     /^Published Time:.*$/gm,
@@ -347,13 +348,29 @@ function cleanArticleContent(rawContent: string): string {
     /^.*Wordiply.*$/gm,
     /^Image \d+:.*$/gm,
     /^View image in fullscreen.*$/gm,
-    /^\s*\*\s*\[.*\]\(.*\)\s*$/gm, // Remove markdown links that are just navigation
+    /^\s*\*\s*\[.*\]\(.*\)\s*$/gm,
+    /^\[[^\]]*?\]\(https?:\/\/(?:www\.)?theguardian\.com[^\)]*?\)$/gm
+    // Remove Markdown links that are just navigation
   ];
+  const stringsToRemove:string[] = [
+    "*   [About Us](https://www.pbs.org/newshour/about)",
+    "*   [Facebook](https://www.facebook.com/newshour)",
+  "*   [YouTube](https://www.youtube.com/user/PBSNewsHour)",
+  "*   [Instagram](https://www.instagram.com/newshour/)",
+  "*   [X](https://twitter.com/NewsHour)",
+  "*   [TikTok](https://www.tiktok.com/@pbsnews)",
+  "*   [Threads](https://www.threads.net/@newshour)",
+  "*   [RSS](https://www.pbs.org/newshour/feeds/rss/headlines)",
+    "Enter your email address",
+
+];
   
   linesToRemove.forEach(pattern => {
     content = content.replace(pattern, '');
   });
-  
+  stringsToRemove.forEach(pattern => {
+    content = content.replace(pattern, '');
+  })
   // Remove multiple consecutive newlines
   content = content.replace(/\n{3,}/g, '\n\n');
   
@@ -377,15 +394,14 @@ function cleanArticleContent(rawContent: string): string {
     content = lines.slice(articleStartIndex).join('\n');
   }
   
-  return content.trim();
+  return content
 }
 
 export async function fetchArticleContent(url: string): Promise<string> {
   try {
     const response = await fetch(`https://r.jina.ai/${url}`);
     const rawContent = await response.text();
-    const cleanedContent = cleanArticleContent(rawContent);
-    return cleanedContent;
+    return cleanArticleContent(rawContent);
   } catch (error) {
     console.error('Jina AI Reader error:', error);
     return '';
