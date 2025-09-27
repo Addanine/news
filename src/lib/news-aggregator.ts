@@ -352,12 +352,14 @@ function cleanArticleContent(rawContent: string): string {
     /^.*Crosswords.*$/gm,
     /^.*Wordiply.*$/gm,
     /^Image \d+:.*$/gm,
+    /^Support\s\$*.$/gm,
     /^View image in fullscreen.*$/gm,
     /^\s*\*\s*\[.*\]\(.*\)\s*$/gm,
     /^\[[^\]]*?\]\(https?:\/\/(?:www\.)?theguardian\.com[^\)]*?\)$/gm
     // Remove Markdown links that are just navigation
   ];
   const stringsToRemove:string[] = [
+    "- [x]",
     "*   [About Us](https://www.pbs.org/newshour/about)",
     "*   [Facebook](https://www.facebook.com/newshour)",
   "*   [YouTube](https://www.youtube.com/user/PBSNewsHour)",
@@ -378,6 +380,7 @@ function cleanArticleContent(rawContent: string): string {
 "*   [Travel](https://www.theguardian.com/travel)",
 "*   [Money](https://www.theguardian.com/money)",
     "www.theguardian.com",
+    "![Image 6: Accepted payment methods: Visa, Mastercard, American Express and PayPal](https://assets.guim.co.uk/images/acquisitions/2db3a266287f452355b68d4240df8087/payment-methods.png)"
 
 
 ];
