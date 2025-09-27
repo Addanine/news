@@ -24,7 +24,7 @@ interface Article {
 }
 
 export default function NewsPage() {
-  const { isDark, toggle } = useDarkMode();
+  const { isDark, toggle, mounted } = useDarkMode();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -162,13 +162,15 @@ export default function NewsPage() {
               className="hover:opacity-70 transition-opacity"
               aria-label="Toggle dark mode"
             >
-              <Image 
-                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
-                alt={isDark ? 'Light mode' : 'Dark mode'} 
-                width={20} 
-                height={20}
-                className="dark:invert"
-              />
+              {mounted && (
+                <Image 
+                  src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
+                  alt={isDark ? 'Light mode' : 'Dark mode'} 
+                  width={20} 
+                  height={20}
+                  className="dark:invert"
+                />
+              )}
             </button>
             <Link
               href="/recommendations"
