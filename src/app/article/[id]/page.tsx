@@ -18,29 +18,15 @@ interface Article {
   author?: string;
   categories: Category[];
   content?: string;
-  summary?: string;
 }
 
-export default function NewsPage() {
+export default function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { isDark, toggle } = useDarkMode();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [totalArticles, setTotalArticles] = useState(0);
   const [streamingSummary, setStreamingSummary] = useState("");
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
-  const [sessionId] = useState(() => 
-    typeof window !== 'undefined' 
-      ? localStorage.getItem('sessionId') ?? crypto.randomUUID()
-      : crypto.randomUUID()
-  );
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('sessionId', sessionId);
-    }
-  }, [sessionId]);
 
   const streamSummary = async (content: string, title: string) => {
     setIsSummaryLoading(true);
@@ -76,21 +62,22 @@ export default function NewsPage() {
     }
   };
 
-  const fetchArticle = async (skip: number) => {
+  const fetchArticle = async (articleId: string) => {
     setLoading(true);
     setStreamingSummary("");
     
     try {
-      const dailyRes = await fetch(`/api/daily?skip=${skip}`);
-      const dailyData = await dailyRes.json() as { article?: Article; totalArticles?: number };
+      const response = await fetch(`/api/article/${encodeURIComponent(articleId)}`);
+      const data = await response.json() as { article?: Article };
       
-      if (dailyData.article) {
-        setArticle(dailyData.article);
-        setTotalArticles(dailyData.totalArticles ?? 0);
+      if (data.article) {
+        setArticle(data.article);
         
-        if (dailyData.article.content && dailyData.article.title) {
-          void streamSummary(dailyData.article.content, dailyData.article.title);
+        if (data.article.content && data.article.title) {
+          void streamSummary(data.article.content, data.article.title);
         }
+      } else {
+        setError('article not found');
       }
     } catch (err) {
       setError('failed to load article');
@@ -101,23 +88,20 @@ export default function NewsPage() {
   };
 
   useEffect(() => {
-    void fetchArticle(currentIndex);
+    void (async () => {
+      const resolvedParams = await params;
+      void fetchArticle(resolvedParams.id);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
-
-  const handleNextArticle = () => {
-    setCurrentIndex(prev => prev + 1);
-  };
+  }, []);
 
   const handleShare = async () => {
-    if (!article) return;
-    
-    const shareUrl = `${window.location.origin}/article/${encodeURIComponent(article.id)}`;
+    const shareUrl = window.location.href;
     
     if (navigator.share) {
       try {
         await navigator.share({
-          title: article.title,
+          title: article?.title,
           url: shareUrl,
         });
       } catch (err) {
@@ -128,7 +112,6 @@ export default function NewsPage() {
       alert('Link copied to clipboard!');
     }
   };
-
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -168,7 +151,7 @@ export default function NewsPage() {
       <div className="mx-auto max-w-4xl px-6 py-12">
         {loading && (
           <div className="py-12 text-center text-sm text-gray-600 dark:text-gray-400">
-            loading today&apos;s article...
+            loading article...
           </div>
         )}
 
@@ -180,7 +163,7 @@ export default function NewsPage() {
 
         {!loading && !error && !article && (
           <div className="py-12 text-center text-sm text-gray-600 dark:text-gray-400">
-            no article found for today
+            article not found
           </div>
         )}
 
@@ -227,12 +210,6 @@ export default function NewsPage() {
                 >
                   share
                 </button>
-                <button
-                  onClick={handleNextArticle}
-                  className="border border-black dark:border-gray-700 px-4 py-2 text-sm hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700 transition-colors"
-                >
-                  next article →
-                </button>
                 <a
                   href={article.url}
                   target="_blank"
@@ -241,9 +218,12 @@ export default function NewsPage() {
                 >
                   read original
                 </a>
-                <span className="text-xs text-gray-600 dark:text-gray-400 ml-auto">
-                  {currentIndex + 1} of {totalArticles}
-                </span>
+                <Link
+                  href="/news"
+                  className="border border-black dark:border-gray-700 px-4 py-2 text-sm hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700 transition-colors"
+                >
+                  back to feed
+                </Link>
               </div>
             </div>
 

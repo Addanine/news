@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { aggregateArticles, fetchArticleContent } from '~/lib/news-aggregator';
-import { generateArticleSummary } from '~/lib/openai-summarizer';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,13 +21,11 @@ export async function GET(request: NextRequest) {
     }
 
     const content = await fetchArticleContent(article.url);
-    const summary = await generateArticleSummary(content, article.title);
     
     return NextResponse.json({ 
       article: {
         ...article,
-        content,
-        summary
+        content
       },
       totalArticles: articles.length
     });

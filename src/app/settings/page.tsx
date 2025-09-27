@@ -85,15 +85,15 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white">
-        <header className="border-b border-black px-6 py-4">
+      <main className="min-h-screen bg-white dark:bg-gray-900">
+        <header className="border-b border-black dark:border-gray-700 px-6 py-4">
           <div className="mx-auto max-w-4xl">
-            <Link href="/" className="text-xl font-normal hover:underline">
-              lift
+            <Link href="/" className="text-xl font-normal hover:underline dark:text-white">
+              lift.news
             </Link>
           </div>
         </header>
-        <div className="mx-auto max-w-4xl px-6 py-12 text-center text-sm text-gray-600">
+        <div className="mx-auto max-w-4xl px-6 py-12 text-center text-sm text-gray-600 dark:text-gray-400">
           loading settings...
         </div>
       </main>
@@ -101,30 +101,30 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <header className="border-b border-black px-6 py-4">
+    <main className="min-h-screen bg-white dark:bg-gray-900">
+      <header className="border-b border-black dark:border-gray-700 px-6 py-4">
         <div className="mx-auto max-w-4xl">
-          <Link href="/" className="text-xl font-normal hover:underline">
-            lift
+          <Link href="/" className="text-xl font-normal hover:underline dark:text-white">
+            lift.news
           </Link>
         </div>
       </header>
 
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-normal">settings</h1>
+          <h1 className="text-2xl font-normal dark:text-white">settings</h1>
           <Link
             href="/news"
-            className="text-sm hover:underline"
+            className="text-sm hover:underline dark:text-white"
           >
             ← back to news
           </Link>
         </div>
 
         <div className="space-y-8">
-          <section className="border border-black p-6">
-            <h2 className="mb-4 text-lg font-normal">categories</h2>
-            <p className="mb-4 text-sm text-gray-600">
+          <section className="border border-black dark:border-gray-700 p-6">
+            <h2 className="mb-4 text-lg font-normal dark:text-white">categories</h2>
+            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               select which types of news you want to see
             </p>
             <div className="flex flex-wrap gap-2">
@@ -132,10 +132,10 @@ export default function SettingsPage() {
                 <button
                   key={category.id}
                   onClick={() => toggleCategory(category.id)}
-                  className={`border border-black px-3 py-1.5 text-xs transition-colors ${
+                  className={`border border-black dark:border-gray-700 px-3 py-1.5 text-xs transition-colors ${
                     selectedCategories.includes(category.id)
-                      ? 'bg-black text-white'
-                      : 'bg-white hover:bg-gray-100'
+                      ? 'bg-black dark:bg-gray-700 text-white'
+                      : 'bg-white dark:bg-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
                   <span className="mr-1">{category.icon}</span>
@@ -145,8 +145,8 @@ export default function SettingsPage() {
             </div>
           </section>
 
-          <section className="border border-black p-6">
-            <h2 className="mb-4 text-lg font-normal">display</h2>
+          <section className="border border-black dark:border-gray-700 p-6">
+            <h2 className="mb-4 text-lg font-normal dark:text-white">display</h2>
             <div className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                 onChange={(e) => setShowImages(e.target.checked)}
                 className="h-4 w-4"
               />
-              <label htmlFor="showImages" className="text-sm">
+              <label htmlFor="showImages" className="text-sm dark:text-gray-200">
                 show article images
               </label>
             </div>
@@ -165,13 +165,13 @@ export default function SettingsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="border border-black bg-black px-6 py-3 text-sm text-white transition-colors hover:bg-white hover:text-black disabled:opacity-50"
+              className="border border-black dark:border-gray-700 bg-black dark:bg-gray-700 px-6 py-3 text-sm text-white transition-colors hover:bg-white hover:text-black dark:hover:bg-gray-600 disabled:opacity-50"
             >
               {saving ? 'saving...' : 'save settings'}
             </button>
             <Link
               href="/news"
-              className="inline-block border border-black px-6 py-3 text-sm transition-colors hover:bg-black hover:text-white"
+              className="inline-block border border-black dark:border-gray-700 px-6 py-3 text-sm transition-colors hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700"
             >
               cancel
             </Link>

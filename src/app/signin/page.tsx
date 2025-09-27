@@ -36,22 +36,22 @@ export default function SignInPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
-      <header className="border-b border-black px-6 py-4">
+    <main className="min-h-screen bg-white dark:bg-gray-900">
+      <header className="border-b border-black dark:border-gray-700 px-6 py-4">
         <div className="mx-auto max-w-4xl">
-          <Link href="/" className="text-xl font-normal hover:underline">
-            lift
+          <Link href="/" className="text-xl font-normal hover:underline dark:text-white">
+            lift.news
           </Link>
         </div>
       </header>
 
       <div className="mx-auto max-w-md px-6 py-16">
-        <div className="border border-black p-8">
-          <h1 className="mb-6 text-2xl font-normal">sign in</h1>
+        <div className="border border-black dark:border-gray-700 p-8">
+          <h1 className="mb-6 text-2xl font-normal dark:text-white">sign in</h1>
 
           <form onSubmit={handleSignIn} className="space-y-6">
             <div>
-              <label htmlFor="email" className="mb-2 block text-sm">
+              <label htmlFor="email" className="mb-2 block text-sm dark:text-gray-200">
                 email
               </label>
               <input
@@ -59,14 +59,14 @@ export default function SignInPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-black px-4 py-2 text-sm focus:outline-none"
+                className="w-full border border-black dark:border-gray-700 dark:bg-gray-800 dark:text-white px-4 py-2 text-sm focus:outline-none"
                 required
                 disabled={loading}
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm">
+              <label htmlFor="password" className="mb-2 block text-sm dark:text-gray-200">
                 password
               </label>
               <input
@@ -74,14 +74,14 @@ export default function SignInPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-black px-4 py-2 text-sm focus:outline-none"
+                className="w-full border border-black dark:border-gray-700 dark:bg-gray-800 dark:text-white px-4 py-2 text-sm focus:outline-none"
                 required
                 disabled={loading}
               />
             </div>
 
             {error && (
-              <div className="border border-black bg-gray-50 p-3 text-sm">
+              <div className="border border-black dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3 text-sm dark:text-white">
                 {error}
               </div>
             )}
@@ -89,13 +89,13 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full border border-black bg-black px-6 py-3 text-sm text-white transition-colors hover:bg-white hover:text-black disabled:opacity-50"
+              className="w-full border border-black dark:border-gray-700 bg-black dark:bg-gray-700 px-6 py-3 text-sm text-white transition-colors hover:bg-white hover:text-black dark:hover:bg-gray-600 disabled:opacity-50"
             >
               {loading ? "signing in..." : "sign in"}
             </button>
           </form>
 
-          <div className="mt-6 border-t border-black pt-6 text-sm">
+          <div className="mt-6 border-t border-black dark:border-gray-700 pt-6 text-sm dark:text-gray-200">
             <p>
               don&apos;t have an account?{" "}
               <Link href="/signup" className="underline hover:no-underline">
@@ -105,7 +105,7 @@ export default function SignInPage() {
           </div>
         </div>
 
-        <div className="mt-6 text-center text-xs text-gray-600">
+        <div className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
           <Link href="/" className="hover:underline">
             ← back to home
           </Link>
