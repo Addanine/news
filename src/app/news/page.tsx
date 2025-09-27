@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import type { Category } from "~/lib/news-aggregator";
 
 interface Article {
   id: string;
@@ -12,77 +15,105 @@ interface Article {
   publishedAt: string;
   source: string;
   author?: string;
+  categories: Category[];
+  content?: string;
 }
 
 export default function NewsPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [liked, setLiked] = useState(false);
+  const [sessionId] = useState(() => 
+    typeof window !== 'undefined' 
+      ? localStorage.getItem('sessionId') ?? crypto.randomUUID()
+      : crypto.randomUUID()
+  );
 
   useEffect(() => {
-    async function fetchArticles() {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sessionId', sessionId);
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    async function fetchData() {
       try {
-        const response = await fetch('/api/articles');
-        const data = await response.json() as { articles?: Article[] };
+        const [dailyRes, likesRes] = await Promise.all([
+          fetch('/api/daily'),
+          fetch(`/api/articles/like?sessionId=${sessionId}`)
+        ]);
+
+        const dailyData = await dailyRes.json() as { article?: Article };
+        const likesData = await likesRes.json() as { likes?: string[] };
         
-        if (data.articles) {
-          setArticles(data.articles);
+        if (dailyData.article) {
+          setArticle(dailyData.article);
+          if (likesData.likes?.includes(dailyData.article.id)) {
+            setLiked(true);
+          }
         }
       } catch (err) {
-        setError('failed to load articles');
+        setError('failed to load daily article');
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
 
-    void fetchArticles();
-  }, []);
+    void fetchData();
+  }, [sessionId]);
 
-  const formatTimeAgo = (dateString: string) => {
+  const handleLike = async () => {
+    if (!article) return;
+
+    try {
+      const response = await fetch('/api/articles/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articleId: article.id, sessionId }),
+      });
+
+      const data = await response.json() as { liked?: boolean };
+      
+      if (data.liked !== undefined) {
+        setLiked(data.liked);
+      }
+    } catch (err) {
+      console.error('Failed to like article:', err);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'just now';
-    if (diffInHours === 1) return '1h ago';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return '1d ago';
-    return `${diffInDays}d ago`;
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
   return (
     <main className="min-h-screen bg-white">
       <header className="border-b border-black px-6 py-4">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto max-w-4xl flex items-center justify-between">
           <Link href="/" className="text-xl font-normal hover:underline">
             lift
+          </Link>
+          <Link
+            href="/settings"
+            className="text-sm hover:underline"
+          >
+            settings
           </Link>
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mb-8 flex items-center justify-between border-b border-black pb-4">
-          <input
-            type="text"
-            placeholder="search..."
-            className="border border-black px-4 py-2 text-sm focus:outline-none"
-          />
-          <div className="flex gap-4 text-sm">
-            <button className="border border-black px-4 py-2 hover:bg-black hover:text-white transition-colors">
-              categories
-            </button>
-            <button className="border border-black px-4 py-2 hover:bg-black hover:text-white transition-colors">
-              settings
-            </button>
-          </div>
-        </div>
-
+      <div className="mx-auto max-w-4xl px-6 py-12">
         {loading && (
           <div className="py-12 text-center text-sm text-gray-600">
-            loading articles...
+            loading today&apos;s article...
           </div>
         )}
 
@@ -92,50 +123,117 @@ export default function NewsPage() {
           </div>
         )}
 
-        {!loading && !error && articles.length === 0 && (
+        {!loading && !error && !article && (
           <div className="py-12 text-center text-sm text-gray-600">
-            no articles found
+            no article found for today
           </div>
         )}
 
-        {!loading && !error && articles.length > 0 && (
-          <div className="grid grid-cols-1 gap-px bg-black md:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article) => (
-              <a
-                key={article.id}
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white p-6 hover:bg-gray-100 transition-colors"
-              >
-                {article.imageUrl ? (
-                  <div className="mb-4 aspect-[4/3] border border-black bg-gray-50 overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={article.imageUrl}
-                      alt={article.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="mb-4 aspect-[4/3] border border-black bg-gray-50" />
-                )}
-                <div className="mb-2 text-xs uppercase tracking-wider text-gray-600">
-                  {article.source}
-                </div>
-                <h2 className="mb-2 text-lg font-normal leading-tight line-clamp-3">
-                  {article.title}
-                </h2>
-                <p className="mb-4 text-sm text-gray-700 leading-relaxed line-clamp-3">
+        {!loading && !error && article && (
+          <article className="space-y-8">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-xs text-gray-600">
+                <span className="uppercase tracking-wider">{article.source}</span>
+                <span>{formatDate(article.publishedAt)}</span>
+              </div>
+              
+              <h1 className="text-4xl font-normal leading-tight">
+                {article.title}
+              </h1>
+              
+              {article.description && (
+                <p className="text-lg text-gray-700 leading-relaxed">
                   {article.description}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-600">
-                  <span>{article.source}</span>
-                  <span>{formatTimeAgo(article.publishedAt)}</span>
-                </div>
-              </a>
-            ))}
-          </div>
+              )}
+
+              <div className="flex items-center gap-4 pt-4">
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-2 border border-black px-4 py-2 text-sm transition-colors ${
+                    liked 
+                      ? 'bg-black text-white' 
+                      : 'bg-white hover:bg-gray-100'
+                  }`}
+                >
+                  {liked ? '♥' : '♡'} {liked ? 'liked' : 'like'}
+                </button>
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-black px-4 py-2 text-sm hover:bg-black hover:text-white transition-colors"
+                >
+                  read original →
+                </a>
+              </div>
+            </div>
+
+            {article.imageUrl && (
+              <div className="border border-black">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="w-full"
+                />
+              </div>
+            )}
+
+            {article.content && (
+              <div className="border-t border-black pt-8">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    img: ({ src, alt }) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img 
+                        src={src} 
+                        alt={alt ?? ''} 
+                        className="w-full border border-black my-6"
+                      />
+                    ),
+                    a: ({ href, children }) => (
+                      <a 
+                        href={href} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="underline hover:no-underline"
+                      >
+                        {children}
+                      </a>
+                    ),
+                    p: ({ children }) => (
+                      <p className="mb-4 text-base leading-relaxed">{children}</p>
+                    ),
+                    h1: ({ children }) => (
+                      <h1 className="text-3xl font-normal mt-8 mb-4">{children}</h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-2xl font-normal mt-8 mb-4">{children}</h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-xl font-normal mt-6 mb-3">{children}</h3>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className="list-disc list-inside mb-4 space-y-2">{children}</ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="list-decimal list-inside mb-4 space-y-2">{children}</ol>
+                    ),
+                    blockquote: ({ children }) => (
+                      <blockquote className="border-l-4 border-black pl-4 italic my-4">{children}</blockquote>
+                    ),
+                    code: ({ children }) => (
+                      <code className="bg-gray-100 px-1 py-0.5 text-sm">{children}</code>
+                    ),
+                  }}
+                >
+                  {article.content}
+                </ReactMarkdown>
+              </div>
+            )}
+          </article>
         )}
       </div>
     </main>
