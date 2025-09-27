@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Category } from "~/lib/news-aggregator";
 import { useDarkMode } from "~/lib/dark-mode";
+import { trackArticleRead } from "~/lib/reading-tracker";
 
 interface Article {
   id: string;
@@ -73,6 +74,13 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
       if (data.article) {
         setArticle(data.article);
         
+        trackArticleRead(
+          data.article.id,
+          data.article.title,
+          data.article.source,
+          data.article.categories
+        );
+        
         if (data.article.content && data.article.title) {
           void streamSummary(data.article.content, data.article.title);
         }
@@ -138,6 +146,12 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
             >
               {isDark ? '☀️' : '🌙'}
             </button>
+            <Link
+              href="/insights"
+              className="text-sm hover:underline dark:text-white"
+            >
+              insights
+            </Link>
             <Link
               href="/settings"
               className="text-sm hover:underline dark:text-white"

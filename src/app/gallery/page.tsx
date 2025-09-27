@@ -70,6 +70,12 @@ export default function GalleryPage() {
               {isDark ? '☀️' : '🌙'}
             </button>
             <Link
+              href="/insights"
+              className="text-sm hover:underline dark:text-white"
+            >
+              insights
+            </Link>
+            <Link
               href="/settings"
               className="text-sm hover:underline dark:text-white"
             >

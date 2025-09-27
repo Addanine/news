@@ -87,10 +87,18 @@ export default function SettingsPage() {
     return (
       <main className="min-h-screen bg-white dark:bg-gray-900">
         <header className="border-b border-black dark:border-gray-700 px-6 py-4">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-4xl flex items-center justify-between">
             <Link href="/" className="text-xl font-normal hover:underline dark:text-white">
               lift.news
             </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/insights" className="text-sm hover:underline dark:text-white">
+                insights
+              </Link>
+              <Link href="/news" className="text-sm hover:underline dark:text-white">
+                news
+              </Link>
+            </div>
           </div>
         </header>
         <div className="mx-auto max-w-4xl px-6 py-12 text-center text-sm text-gray-600 dark:text-gray-400">
@@ -103,10 +111,18 @@ export default function SettingsPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900">
       <header className="border-b border-black dark:border-gray-700 px-6 py-4">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-4xl flex items-center justify-between">
           <Link href="/" className="text-xl font-normal hover:underline dark:text-white">
             lift.news
           </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/insights" className="text-sm hover:underline dark:text-white">
+              insights
+            </Link>
+            <Link href="/news" className="text-sm hover:underline dark:text-white">
+              news
+            </Link>
+          </div>
         </div>
       </header>
 
