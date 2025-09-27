@@ -5,7 +5,7 @@ export default function HomePage() {
     {
       name: "newsapi",
       url: "https://newsapi.org",
-      description: "real-time news from 80,000+ sources worldwide",
+      description: "real-time news from 80,000+ sources worldwide.",
       features: ["70+ million articles", "50+ languages", "historical data"]
     },
     {
@@ -60,8 +60,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <h3 className="mb-6 text-xl font-normal">our news sources</h3>
+        <div className="mb-6">
+          <h3 className="mb-4 text-xl font-normal">our news sources</h3>
           <div className="space-y-px bg-black">
             {aggregators.map((source) => (
               <div
@@ -69,9 +69,9 @@ export default function HomePage() {
                 className="bg-white p-6 hover:bg-gray-50 transition-colors"
               >
                 <div className="mb-2">
-                  <h4 className="text-lg font-normal">{source.name}</h4>
+                  <h4 className="text-lg font-mono">{source.name}</h4>
                 </div>
-                <p className="mb-3 text-sm text-gray-700">{source.description}</p>
+                <p className="mb-3 text-sm font-mono text-gray-700">{source.description}</p>
                 <ul className="mb-2 flex flex-wrap gap-2">
                   {source.features.map((feature) => (
                     <li
