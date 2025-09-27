@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Category } from "~/lib/news-aggregator";
+
 interface Article {
   id: string;
   title: string;
@@ -79,7 +80,7 @@ export default function NewsPage() {
       <header className="border-b border-black px-6 py-4">
         <div className="mx-auto max-w-4xl flex items-center justify-between">
           <Link href="/" className="text-xl font-normal hover:underline">
-            lift.news
+            lift
           </Link>
           <Link
             href="/settings"
