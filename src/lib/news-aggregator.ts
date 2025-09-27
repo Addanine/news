@@ -83,7 +83,7 @@ const POSITIVE_KEYWORDS = [
 const NEGATIVE_KEYWORDS = [
   'death', 'murder', 'war', 'violence', 'crash', 'disaster', 'terrorism',
   'crime', 'scandal', 'controversy', 'conflict', 'shooting', 'attack',
-  'fraud', 'corruption', 'lawsuit', 'bankruptcy', 'fired', 'layoffs'
+  'fraud', 'corruption', 'lawsuit', 'bankruptcy', 'fired', 'layoffs', 'Russia', 'Belarus'
 ];
 
 const EXCLUDE_SPORTS_KEYWORDS = [
