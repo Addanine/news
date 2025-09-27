@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { aggregateArticles, fetchArticleContent } from '~/lib/news-aggregator';
-import { generateArticleSummary } from '~/lib/openai-summarizer';
+import { aggregateArticles } from '~/lib/news-aggregator';
 
 export async function GET() {
   try {
@@ -11,23 +10,10 @@ export async function GET() {
     }
 
     const top10Articles = articles.slice(0, 10);
-    
-    const articlesWithSummaries = await Promise.all(
-      top10Articles.map(async (article) => {
-        const content = await fetchArticleContent(article.url);
-        const summary = await generateArticleSummary(content, article.title);
-        
-        return {
-          ...article,
-          content,
-          summary
-        };
-      })
-    );
 
     return NextResponse.json({ 
-      articles: articlesWithSummaries,
-      total: articlesWithSummaries.length 
+      articles: top10Articles,
+      total: top10Articles.length 
     });
   } catch (error) {
     console.error('Error fetching articles:', error);

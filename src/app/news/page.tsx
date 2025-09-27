@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -158,11 +159,23 @@ export default function NewsPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggle}
-              className="text-sm hover:underline dark:text-white"
+              className="hover:opacity-70 transition-opacity"
               aria-label="Toggle dark mode"
             >
-              {isDark ? '☀️' : '🌙'}
+              <Image 
+                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
+                alt={isDark ? 'Light mode' : 'Dark mode'} 
+                width={20} 
+                height={20}
+                className="dark:invert"
+              />
             </button>
+            <Link
+              href="/recommendations"
+              className="text-sm hover:underline dark:text-white"
+            >
+              for you
+            </Link>
             <Link
               href="/insights"
               className="text-sm hover:underline dark:text-white"

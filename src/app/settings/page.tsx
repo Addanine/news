@@ -92,6 +92,9 @@ export default function SettingsPage() {
               lift.news
             </Link>
             <div className="flex items-center gap-4">
+              <Link href="/recommendations" className="text-sm hover:underline dark:text-white">
+                for you
+              </Link>
               <Link href="/insights" className="text-sm hover:underline dark:text-white">
                 insights
               </Link>
@@ -116,6 +119,9 @@ export default function SettingsPage() {
             lift.news
           </Link>
           <div className="flex items-center gap-4">
+            <Link href="/recommendations" className="text-sm hover:underline dark:text-white">
+              for you
+            </Link>
             <Link href="/insights" className="text-sm hover:underline dark:text-white">
               insights
             </Link>

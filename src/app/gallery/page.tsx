@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { Category } from "~/lib/news-aggregator";
 import { useDarkMode } from "~/lib/dark-mode";
@@ -23,6 +24,8 @@ export default function GalleryPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [summaries, setSummaries] = useState<Record<string, string>>({});
+  const [loadingSummaries, setLoadingSummaries] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     async function fetchArticles() {
@@ -33,6 +36,10 @@ export default function GalleryPage() {
         
         if (data.articles) {
           setArticles(data.articles);
+          
+          data.articles.forEach((article) => {
+            void fetchSummary(article.id, article.url, article.title);
+          });
         }
       } catch (err) {
         setError('failed to load articles');
@@ -44,6 +51,28 @@ export default function GalleryPage() {
 
     void fetchArticles();
   }, []);
+
+  const fetchSummary = async (articleId: string, url: string, title: string) => {
+    setLoadingSummaries(prev => ({ ...prev, [articleId]: true }));
+    
+    try {
+      const response = await fetch('/api/article-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, title }),
+      });
+      
+      const data = await response.json() as { summary?: string };
+      
+      if (data.summary) {
+        setSummaries(prev => ({ ...prev, [articleId]: data.summary ?? '' }));
+      }
+    } catch (err) {
+      console.error('Failed to load summary:', err);
+    } finally {
+      setLoadingSummaries(prev => ({ ...prev, [articleId]: false }));
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -64,11 +93,23 @@ export default function GalleryPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggle}
-              className="text-sm hover:underline dark:text-white"
+              className="hover:opacity-70 transition-opacity"
               aria-label="Toggle dark mode"
             >
-              {isDark ? '☀️' : '🌙'}
+              <Image 
+                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
+                alt={isDark ? 'Light mode' : 'Dark mode'} 
+                width={20} 
+                height={20}
+                className="dark:invert"
+              />
             </button>
+            <Link
+              href="/recommendations"
+              className="text-sm hover:underline dark:text-white"
+            >
+              for you
+            </Link>
             <Link
               href="/insights"
               className="text-sm hover:underline dark:text-white"
@@ -139,12 +180,17 @@ export default function GalleryPage() {
                   <h2 className="text-lg font-normal leading-tight group-hover:underline dark:text-white">
                     {article.title}
                   </h2>
-                  {article.summary && (
+                  {summaries[article.id] && (
                     <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                      {article.summary}
+                      {summaries[article.id]}
                     </p>
                   )}
-                  {!article.summary && article.description && (
+                  {!summaries[article.id] && loadingSummaries[article.id] && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 italic line-clamp-2">
+                      loading summary...
+                    </p>
+                  )}
+                  {!summaries[article.id] && !loadingSummaries[article.id] && article.description && (
                     <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
                       {article.description}
                     </p>

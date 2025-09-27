@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDarkMode } from "~/lib/dark-mode";
 import { getReadingStats, getReadingCalendar, type ReadingStats } from "~/lib/reading-tracker";
@@ -64,16 +65,28 @@ export default function InsightsPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggle}
-              className="text-sm hover:underline dark:text-white"
+              className="hover:opacity-70 transition-opacity"
               aria-label="Toggle dark mode"
             >
-              {isDark ? '☀️' : '🌙'}
+              <Image 
+                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
+                alt={isDark ? 'Light mode' : 'Dark mode'} 
+                width={20} 
+                height={20}
+                className="dark:invert"
+              />
             </button>
             <Link
               href="/news"
               className="text-sm hover:underline dark:text-white"
             >
               news
+            </Link>
+            <Link
+              href="/recommendations"
+              className="text-sm hover:underline dark:text-white"
+            >
+              for you
             </Link>
             <Link
               href="/gallery"
@@ -101,25 +114,33 @@ export default function InsightsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="border border-black dark:border-gray-700 p-6">
-            <div className="text-4xl mb-2">🔥</div>
+            <div className="mb-3">
+              <Image src="/icons/streak.svg" alt="Streak" width={32} height={32} className="dark:invert" />
+            </div>
             <div className="text-3xl font-normal dark:text-white">{stats.currentStreak}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">day streak</div>
           </div>
 
           <div className="border border-black dark:border-gray-700 p-6">
-            <div className="text-4xl mb-2">📚</div>
+            <div className="mb-3">
+              <Image src="/icons/book.svg" alt="Books" width={32} height={32} className="dark:invert" />
+            </div>
             <div className="text-3xl font-normal dark:text-white">{stats.totalArticlesRead}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">articles read</div>
           </div>
 
           <div className="border border-black dark:border-gray-700 p-6">
-            <div className="text-4xl mb-2">📅</div>
+            <div className="mb-3">
+              <Image src="/icons/calendar.svg" alt="Calendar" width={32} height={32} className="dark:invert" />
+            </div>
             <div className="text-3xl font-normal dark:text-white">{stats.articlesThisWeek}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">this week</div>
           </div>
 
           <div className="border border-black dark:border-gray-700 p-6">
-            <div className="text-4xl mb-2">👑</div>
+            <div className="mb-3">
+              <Image src="/icons/crown.svg" alt="Crown" width={32} height={32} className="dark:invert" />
+            </div>
             <div className="text-3xl font-normal dark:text-white">{stats.longestStreak}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">longest streak</div>
           </div>
@@ -136,9 +157,8 @@ export default function InsightsPage() {
                     badge.earned ? 'opacity-100' : 'opacity-30'
                   }`}
                 >
-                  <div className="text-3xl mb-2">{badge.icon}</div>
-                  <div className="text-sm font-normal dark:text-white">{badge.name}</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  <div className="text-sm font-normal dark:text-white mb-1">{badge.name}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
                     {badge.description}
                   </div>
                 </div>

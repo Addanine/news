@@ -25,7 +25,6 @@ export interface Badge {
   id: string;
   name: string;
   description: string;
-  icon: string;
   earned: boolean;
   earnedDate?: string;
 }
@@ -195,56 +194,48 @@ function calculateBadges(
       id: "first_article",
       name: "First Steps",
       description: "Read your first article",
-      icon: "🌟",
       earned: totalRead >= 1,
     },
     {
       id: "streak_3",
       name: "Consistent Reader",
       description: "Maintain a 3-day reading streak",
-      icon: "🔥",
       earned: currentStreak >= 3,
     },
     {
       id: "streak_7",
       name: "Week Warrior",
       description: "Maintain a 7-day reading streak",
-      icon: "⚡",
       earned: currentStreak >= 7,
     },
     {
       id: "streak_30",
       name: "Monthly Master",
       description: "Maintain a 30-day reading streak",
-      icon: "👑",
       earned: longestStreak >= 30,
     },
     {
       id: "articles_10",
       name: "Getting Started",
       description: "Read 10 articles",
-      icon: "📚",
       earned: totalRead >= 10,
     },
     {
       id: "articles_50",
       name: "Knowledgeable",
       description: "Read 50 articles",
-      icon: "🎓",
       earned: totalRead >= 50,
     },
     {
       id: "articles_100",
       name: "News Enthusiast",
       description: "Read 100 articles",
-      icon: "🏆",
       earned: totalRead >= 100,
     },
     {
       id: "weekly_10",
       name: "Weekly Reader",
       description: "Read 10 articles in a week",
-      icon: "📖",
       earned: weeklyRead >= 10,
     },
   ];
