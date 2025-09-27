@@ -305,11 +305,87 @@ export async function fetchFromNYT(): Promise<Article[]> {
   }
 }
 
+function cleanArticleContent(rawContent: string): string {
+  let content = rawContent;
+  
+  // Remove everything before "Markdown Content:" if it exists
+  const markdownStart = content.indexOf('Markdown Content:');
+  if (markdownStart !== -1) {
+    content = content.substring(markdownStart + 'Markdown Content:'.length);
+  }
+  
+  // Remove navigation elements and common website cruft
+  const linesToRemove = [
+    /^Title:.*$/gm,
+    /^URL Source:.*$/gm,
+    /^Published Time:.*$/gm,
+    /^Markdown Content:.*$/gm,
+    /^===============.*$/gm,
+    /^Skip to.*$/gm,
+    /^Close dialogue.*$/gm,
+    /^Support the Guardian.*$/gm,
+    /^Fund the free press.*$/gm,
+    /^Print subscriptions.*$/gm,
+    /^Newsletters.*$/gm,
+    /^Sign in.*$/gm,
+    /^.*edition.*$/gm,
+    /^The Guardian - Back to home.*$/gm,
+    /^\[x\].*$/gm,
+    /^News$|^Opinion$|^Sport$|^Culture$|^Lifestyle$/gm,
+    /^View all.*$/gm,
+    /^Show more Hide.*$/gm,
+    /^Search input.*$/gm,
+    /^Download the app.*$/gm,
+    /^Search jobs.*$/gm,
+    /^Digital Archive.*$/gm,
+    /^Guardian.*$/gm,
+    /^About Us.*$/gm,
+    /^Live events.*$/gm,
+    /^Corrections.*$/gm,
+    /^Tips.*$/gm,
+    /^.*Crosswords.*$/gm,
+    /^.*Wordiply.*$/gm,
+    /^Image \d+:.*$/gm,
+    /^View image in fullscreen.*$/gm,
+    /^\s*\*\s*\[.*\]\(.*\)\s*$/gm, // Remove markdown links that are just navigation
+  ];
+  
+  linesToRemove.forEach(pattern => {
+    content = content.replace(pattern, '');
+  });
+  
+  // Remove multiple consecutive newlines
+  content = content.replace(/\n{3,}/g, '\n\n');
+  
+  // Remove leading/trailing whitespace
+  content = content.trim();
+  
+  // If content starts with navigation elements, try to find the actual article start
+  const lines = content.split('\n');
+  let articleStartIndex = 0;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]?.trim() ?? '';
+    // Look for the first substantial paragraph (not navigation/metadata)
+    if (line.length > 50 && !/^(News|Opinion|Sport|Culture|Lifestyle|View all|Show more|Search|Support|Sign|Download|About|The Guardian)/.exec(line)) {
+      articleStartIndex = i;
+      break;
+    }
+  }
+  
+  if (articleStartIndex > 0) {
+    content = lines.slice(articleStartIndex).join('\n');
+  }
+  
+  return content.trim();
+}
+
 export async function fetchArticleContent(url: string): Promise<string> {
   try {
     const response = await fetch(`https://r.jina.ai/${url}`);
-    const content = await response.text();
-    return content;
+    const rawContent = await response.text();
+    const cleanedContent = cleanArticleContent(rawContent);
+    return cleanedContent;
   } catch (error) {
     console.error('Jina AI Reader error:', error);
     return '';

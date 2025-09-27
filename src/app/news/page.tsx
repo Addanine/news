@@ -17,13 +17,13 @@ interface Article {
   author?: string;
   categories: Category[];
   content?: string;
+  summary?: string;
 }
 
 export default function NewsPage() {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [liked, setLiked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalArticles, setTotalArticles] = useState(0);
   const [sessionId] = useState(() => 
@@ -41,18 +41,12 @@ export default function NewsPage() {
   const fetchArticle = async (skip: number) => {
     setLoading(true);
     try {
-      const [dailyRes, likesRes] = await Promise.all([
-        fetch(`/api/daily?skip=${skip}`),
-        fetch(`/api/articles/like?sessionId=${sessionId}`)
-      ]);
-
+      const dailyRes = await fetch(`/api/daily?skip=${skip}`);
       const dailyData = await dailyRes.json() as { article?: Article; totalArticles?: number };
-      const likesData = await likesRes.json() as { likes?: string[] };
       
       if (dailyData.article) {
         setArticle(dailyData.article);
         setTotalArticles(dailyData.totalArticles ?? 0);
-        setLiked(likesData.likes?.includes(dailyData.article.id) ?? false);
       }
     } catch (err) {
       setError('failed to load article');
@@ -64,32 +58,12 @@ export default function NewsPage() {
 
   useEffect(() => {
     void fetchArticle(currentIndex);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId, currentIndex]);
+  }, [currentIndex]);
 
   const handleNextArticle = () => {
     setCurrentIndex(prev => prev + 1);
   };
 
-  const handleLike = async () => {
-    if (!article) return;
-
-    try {
-      const response = await fetch('/api/articles/like', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ articleId: article.id, sessionId }),
-      });
-
-      const data = await response.json() as { liked?: boolean };
-      
-      if (data.liked !== undefined) {
-        setLiked(data.liked);
-      }
-    } catch (err) {
-      console.error('Failed to like article:', err);
-    }
-  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -148,6 +122,15 @@ export default function NewsPage() {
                 {article.title}
               </h1>
               
+              {article.summary && (
+                <div className="bg-gray-50 border border-black p-4 my-6">
+                  <h3 className="text-sm font-medium text-gray-600 mb-2 uppercase tracking-wider">Quick Summary</h3>
+                  <p className="text-base text-gray-800 leading-relaxed">
+                    {article.summary}
+                  </p>
+                </div>
+              )}
+
               {article.description && (
                 <p className="text-lg text-gray-700 leading-relaxed">
                   {article.description}
@@ -155,16 +138,6 @@ export default function NewsPage() {
               )}
 
               <div className="flex items-center gap-4 pt-4 flex-wrap">
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center gap-2 border border-black px-4 py-2 text-sm transition-colors ${
-                    liked 
-                      ? 'bg-black text-white' 
-                      : 'bg-white hover:bg-gray-100'
-                  }`}
-                >
-                  {liked ? '♥' : '♡'} {liked ? 'liked' : 'like'}
-                </button>
                 <button
                   onClick={handleNextArticle}
                   className="border border-black px-4 py-2 text-sm hover:bg-black hover:text-white transition-colors"
