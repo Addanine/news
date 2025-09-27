@@ -307,14 +307,14 @@ export async function fetchFromNYT(): Promise<Article[]> {
 
 function cleanArticleContent(rawContent: string): string {
   let content = rawContent;
-  console.log(content)
-  
+  // console.log(content)
+
   // Remove everything before "Markdown Content:" if it exists
   const markdownStart = content.indexOf('Markdown Content:');
   if (markdownStart !== -1) {
     content = content.substring(markdownStart + 'Markdown Content:'.length);
   }
-  
+
   // Remove navigation elements and common website cruft
   const linesToRemove:RegExp[] = [
     /^Title:.*$/gm,
@@ -324,6 +324,8 @@ function cleanArticleContent(rawContent: string): string {
     /^===============.*$/gm,
     /^Skip to.*$/gm,
     /^Close dialogue.*$/gm,
+    /^\[Support us.*$/gm,
+    /^Sign in.*$/gm,
     /^Support the Guardian.*$/gm,
     /^Fund the free press.*$/gm,
     /^Print subscriptions.*$/gm,
@@ -331,7 +333,7 @@ function cleanArticleContent(rawContent: string): string {
     /^Sign in.*$/gm,
     /^.*edition.*$/gm,
     /^The Guardian - Back to home.*$/gm,
-    /^\[x\].*$/gm,
+    /^\[x].*$/gm,
     /^News$|^Opinion$|^Sport$|^Culture$|^Lifestyle$/gm,
     /^View all.*$/gm,
     /^Show more Hide.*$/gm,
@@ -353,6 +355,7 @@ function cleanArticleContent(rawContent: string): string {
     // Remove Markdown links that are just navigation
   ];
   const stringsToRemove:string[] = [
+    "[Print subscriptions]",
     "*   [About Us](https://www.pbs.org/newshour/about)",
     "*   [Facebook](https://www.facebook.com/newshour)",
   "*   [YouTube](https://www.youtube.com/user/PBSNewsHour)",
@@ -362,25 +365,39 @@ function cleanArticleContent(rawContent: string): string {
   "*   [Threads](https://www.threads.net/@newshour)",
   "*   [RSS](https://www.pbs.org/newshour/feeds/rss/headlines)",
     "Enter your email address",
+    "*   [Wellness](https://www.theguardian.com/us/wellness)",
+    "*   [Fashion](https://www.theguardian.com/fashion)",
+"*   [Food](https://www.theguardian.com/food)",
+"*   [Recipes](https://www.theguardian.com/tone/recipes)",
+"*   [Love & sex](https://www.theguardian.com/lifeandstyle/love-and-sex)",
+"*   [Home & garden](https://www.theguardian.com/lifeandstyle/home-and-garden)",
+"*   [Health & fitness](https://www.theguardian.com/lifeandstyle/health-and-wellbeing)",
+"*   [Family](https://www.theguardian.com/lifeandstyle/family)",
+"*   [Travel](https://www.theguardian.com/travel)",
+"*   [Money](https://www.theguardian.com/money)",
+    "www.theguardian.com",
+
 
 ];
-  
+
   linesToRemove.forEach(pattern => {
     content = content.replace(pattern, '');
   });
   stringsToRemove.forEach(pattern => {
-    content = content.replace(pattern, '');
+    content = content.replaceAll(pattern, '');
   })
+  content = content.replaceAll(".theguardian.com", "")
+  // console.log(content)
   // Remove multiple consecutive newlines
-  content = content.replace(/\n{3,}/g, '\n\n');
-  
+  content = content.replaceAll(/\n{3,}/g, '\n\n');
+
   // Remove leading/trailing whitespace
   content = content.trim();
-  
+
   // If content starts with navigation elements, try to find the actual article start
   const lines = content.split('\n');
   let articleStartIndex = 0;
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]?.trim() ?? '';
     // Look for the first substantial paragraph (not navigation/metadata)
@@ -389,11 +406,11 @@ function cleanArticleContent(rawContent: string): string {
       break;
     }
   }
-  
+
   if (articleStartIndex > 0) {
     content = lines.slice(articleStartIndex).join('\n');
   }
-  
+
   return content
 }
 
