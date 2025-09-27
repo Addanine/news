@@ -325,7 +325,9 @@ function cleanArticleContent(rawContent: string): string {
     /^Skip to.*$/gm,
     /^Close dialogue.*$/gm,
     /^\[Support us.*$/gm,
-    /^Sign in.*$/gm,
+    /^\[Print subscriptions.*$/gm,
+    /^\[Skip to main content.*$/gm,
+    /^\[Sign in.*$/gm,
     /^Support the Guardian.*$/gm,
     /^Fund the free press.*$/gm,
     /^Print subscriptions.*$/gm,
@@ -345,6 +347,7 @@ function cleanArticleContent(rawContent: string): string {
     /^About Us.*$/gm,
     /^Live events.*$/gm,
     /^Corrections.*$/gm,
+    /^\*\s*.*$/gm,
     /^Tips.*$/gm,
     /^.*Crosswords.*$/gm,
     /^.*Wordiply.*$/gm,
@@ -355,7 +358,6 @@ function cleanArticleContent(rawContent: string): string {
     // Remove Markdown links that are just navigation
   ];
   const stringsToRemove:string[] = [
-    "[Print subscriptions]",
     "*   [About Us](https://www.pbs.org/newshour/about)",
     "*   [Facebook](https://www.facebook.com/newshour)",
   "*   [YouTube](https://www.youtube.com/user/PBSNewsHour)",
@@ -387,10 +389,10 @@ function cleanArticleContent(rawContent: string): string {
     content = content.replaceAll(pattern, '');
   })
   content = content.replaceAll(".theguardian.com", "")
-  // console.log(content)
+  console.log(content)
   // Remove multiple consecutive newlines
   content = content.replaceAll(/\n{3,}/g, '\n\n');
-
+  content = content.replace(/^<em\>/gm, "**")
   // Remove leading/trailing whitespace
   content = content.trim();
 
