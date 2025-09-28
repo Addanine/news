@@ -380,6 +380,9 @@ function cleanArticleContent(rawContent: string): string {
     /^View more comments.*$/gm,
     /^Explore more on.*$/gm,
     /^Marketing preferences.*$/gm,
+    /^Was this helpful\?$/gm,
+    /^Free weekly newsletter.*$/gm,
+    /^Sign up to.*$/gm,
 
 
     // Remove Markdown links that are just navigation
@@ -406,7 +409,7 @@ function cleanArticleContent(rawContent: string): string {
 "*   [Travel](https://www.theguardian.com/travel)",
 "*   [Money](https://www.theguardian.com/money)",
     "www.theguardian.com",
-    "At this unsettling time"
+    "At this unsettling time",
 
 ];
 
