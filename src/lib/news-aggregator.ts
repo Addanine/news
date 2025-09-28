@@ -83,7 +83,7 @@ const POSITIVE_KEYWORDS = [
 const NEGATIVE_KEYWORDS = [
   'death', 'murder', 'war', 'violence', 'crash', 'disaster', 'terrorism',
   'crime', 'scandal', 'controversy', 'conflict', 'shooting', 'attack',
-  'fraud', 'corruption', 'lawsuit', 'bankruptcy', 'fired', 'layoffs', 'Russia', 'Belarus'
+  'fraud', 'corruption', 'lawsuit', 'bankruptcy', 'fired', 'layoffs', 'Russia', 'Belarus', "assault"
 ];
 
 const EXCLUDE_SPORTS_KEYWORDS = [
@@ -91,7 +91,7 @@ const EXCLUDE_SPORTS_KEYWORDS = [
   'league', 'season', 'team wins', 'defeats', 'beat', 'vs', 'versus',
   'quarterback', 'touchdown', 'goal', 'basket', 'home run', 'inning',
   'nfl', 'nba', 'mlb', 'nhl', 'premier league', 'world cup',
-  'soccer', 'football', 'basketball', 'baseball', 'hockey'
+  'soccer', 'football', 'basketball', 'baseball', 'hockey',"sports", "golf"
 ];
 
 const EXCLUDE_ENTERTAINMENT_KEYWORDS = [
@@ -375,7 +375,6 @@ function cleanArticleContent(rawContent: string): string {
     /^\d*\.\s{3}\[#{4}.*/gm,
     /^Support once from.*$/gm,
     /^[A-Z][a-z]*$/gm,
-    /^!\[Continue.*/gm,
     /^Remind me in.*$/gm,
     /^View more comments.*$/gm,
     /^Explore more on.*$/gm,
@@ -383,6 +382,13 @@ function cleanArticleContent(rawContent: string): string {
     /^Was this helpful\?$/gm,
     /^Free weekly newsletter.*$/gm,
     /^Sign up to.*$/gm,
+    /^Get updates about.*$/gm,
+    /^Thank you for your.*$/gm,
+    /^after newsletter promotion.*$/gm,
+    /^\[Continue.*$/gm,
+    /^\[Reuse this.*$/gm,
+    /^\d\s\d$/gm,
+    /^US$/gm
 
 
     // Remove Markdown links that are just navigation
