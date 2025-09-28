@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { DarkModeProvider } from "~/lib/dark-mode";
+import { ReadingPreferencesProvider } from "~/lib/reading-preferences";
 
 export const metadata: Metadata = {
   title: "lift.news",
@@ -22,7 +23,9 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <DarkModeProvider>
-          {children}
+          <ReadingPreferencesProvider>
+            {children}
+          </ReadingPreferencesProvider>
         </DarkModeProvider>
       </body>
     </html>

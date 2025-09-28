@@ -14,3 +14,36 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  header,
+  nav,
+  .no-print,
+  button,
+  .print-hidden {
+    display: none !important;
+  }
+
+  main {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #4b5563;
+  }
+
+  .print-readable {
+    font-size: 1.05rem !important;
+    line-height: 1.75 !important;
+    max-width: 720px !important;
+    margin: 0 auto !important;
+  }
+}
