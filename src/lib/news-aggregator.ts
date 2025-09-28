@@ -435,7 +435,7 @@ function cleanArticleContent(rawContent: string): string {
   // If content starts with navigation elements, try to find the actual article start
   const lines = content.split('\n');
   let articleStartIndex = 0;
-
+  
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]?.trim() ?? '';
     // Look for the first substantial paragraph (not navigation/metadata)
@@ -444,11 +444,11 @@ function cleanArticleContent(rawContent: string): string {
       break;
     }
   }
-
+  
   if (articleStartIndex > 0) {
     content = lines.slice(articleStartIndex).join('\n');
   }
-
+  
   return content
 }
 

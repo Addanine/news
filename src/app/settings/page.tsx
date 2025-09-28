@@ -329,19 +329,22 @@ export default function SettingsPage() {
                   <label htmlFor="readingSpeed" className="mb-2 block text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
                     reading pace
                   </label>
-                  <input
-                    id="readingSpeed"
-                    type="range"
-                    min={0}
-                    max={readingSpeedSteps.length - 1}
-                    value={readingSpeedSteps.indexOf(readingPreferences.readingSpeed)}
-                    onChange={(event) => {
-                      const nextIndex = Number(event.target.value);
-                      updatePreference('readingSpeed', readingSpeedSteps[nextIndex] ?? 'average');
-                    }}
-                    className="w-full"
-                    disabled={!readingPrefsMounted}
-                  />
+                  <div className="flex flex-wrap gap-2">
+                    {readingSpeedSteps.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => updatePreference('readingSpeed', option)}
+                        className={`border border-black px-3 py-1.5 text-xs transition-colors dark:border-gray-700 ${
+                          readingPreferences.readingSpeed === option
+                            ? 'bg-black text-white dark:bg-gray-600'
+                            : 'bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     current: {readingPreferences.readingSpeed}
                   </p>
