@@ -1,9 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Category } from "~/lib/news-aggregator";
+import {
+  getReadingTypography,
+  type ContentWidthOption,
+  type FontFamilyOption,
+  type FontSizeOption,
+  type LineSpacingOption,
+  type ReadingSpeedOption,
+  useReadingPreferences,
+} from "~/lib/reading-preferences";
 
 interface CategoryConfig {
   id: Category;
@@ -28,11 +37,37 @@ export default function SettingsPage() {
   const [showImages, setShowImages] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [sessionId] = useState(() => 
-    typeof window !== 'undefined' 
+  const [sessionId] = useState(() =>
+    typeof window !== 'undefined'
       ? localStorage.getItem('sessionId') ?? crypto.randomUUID()
       : crypto.randomUUID()
   );
+  const {
+    preferences: readingPreferences,
+    updatePreference,
+    reset,
+    mounted: readingPrefsMounted,
+  } = useReadingPreferences();
+
+  const typographyPreview = useMemo(() => getReadingTypography(readingPreferences), [readingPreferences]);
+
+  const fontSizeSteps: FontSizeOption[] = ['small', 'medium', 'large', 'xlarge'];
+  const readingSpeedSteps: ReadingSpeedOption[] = ['slow', 'average', 'fast'];
+  const fontFamilyOptions: { value: FontFamilyOption; label: string }[] = [
+    { value: 'sans', label: 'Sans Serif' },
+    { value: 'serif', label: 'Serif' },
+    { value: 'dyslexic', label: 'Dyslexic-friendly' },
+  ];
+  const spacingOptions: { value: LineSpacingOption; label: string }[] = [
+    { value: 'normal', label: 'Compact' },
+    { value: 'relaxed', label: 'Relaxed' },
+    { value: 'loose', label: 'Open' },
+  ];
+  const widthOptions: { value: ContentWidthOption; label: string }[] = [
+    { value: 'narrow', label: 'Narrow' },
+    { value: 'comfortable', label: 'Comfortable' },
+    { value: 'wide', label: 'Wide' },
+  ];
 
   useEffect(() => {
     async function loadPreferences() {
@@ -180,6 +215,155 @@ export default function SettingsPage() {
               <label htmlFor="showImages" className="text-sm dark:text-gray-200">
                 show article images
               </label>
+            </div>
+          </section>
+
+          <section className="border border-black dark:border-gray-700 p-6">
+            <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-lg font-normal dark:text-white">reading preferences</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  customize how articles look and feel. preferences update instantly and are saved on this device.
+                </p>
+              </div>
+              <button
+                onClick={reset}
+                className="text-xs uppercase tracking-widest text-gray-600 underline transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                type="button"
+              >
+                reset defaults
+              </button>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-5">
+                <div>
+                  <label htmlFor="fontSize" className="mb-2 block text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                    font size
+                  </label>
+                  <input
+                    id="fontSize"
+                    type="range"
+                    min={0}
+                    max={fontSizeSteps.length - 1}
+                    value={fontSizeSteps.indexOf(readingPreferences.fontSize)}
+                    onChange={(event) => {
+                      const nextIndex = Number(event.target.value);
+                      updatePreference('fontSize', fontSizeSteps[nextIndex] ?? 'medium');
+                    }}
+                    className="w-full"
+                    disabled={!readingPrefsMounted}
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    current: {readingPreferences.fontSize}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="mb-2 block text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                    font family
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {fontFamilyOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => updatePreference('fontFamily', option.value)}
+                        className={`border border-black px-3 py-1.5 text-xs transition-colors dark:border-gray-700 ${
+                          readingPreferences.fontFamily === option.value
+                            ? 'bg-black text-white dark:bg-gray-600'
+                            : 'bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="mb-2 block text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                    line spacing
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {spacingOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => updatePreference('lineSpacing', option.value)}
+                        className={`border border-black px-3 py-1.5 text-xs transition-colors dark:border-gray-700 ${
+                          readingPreferences.lineSpacing === option.value
+                            ? 'bg-black text-white dark:bg-gray-600'
+                            : 'bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="mb-2 block text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                    reading width
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {widthOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => updatePreference('contentWidth', option.value)}
+                        className={`border border-black px-3 py-1.5 text-xs transition-colors dark:border-gray-700 ${
+                          readingPreferences.contentWidth === option.value
+                            ? 'bg-black text-white dark:bg-gray-600'
+                            : 'bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="readingSpeed" className="mb-2 block text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                    reading pace
+                  </label>
+                  <input
+                    id="readingSpeed"
+                    type="range"
+                    min={0}
+                    max={readingSpeedSteps.length - 1}
+                    value={readingSpeedSteps.indexOf(readingPreferences.readingSpeed)}
+                    onChange={(event) => {
+                      const nextIndex = Number(event.target.value);
+                      updatePreference('readingSpeed', readingSpeedSteps[nextIndex] ?? 'average');
+                    }}
+                    className="w-full"
+                    disabled={!readingPrefsMounted}
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    current: {readingPreferences.readingSpeed}
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded border border-dashed border-black/40 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/40">
+                <p className="mb-3 text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
+                  live preview
+                </p>
+                <div style={typographyPreview.container}>
+                  <h3 style={typographyPreview.heading(2)} className="text-black dark:text-white">
+                    A kinder way to read the news
+                  </h3>
+                  <p style={typographyPreview.paragraph} className="text-gray-700 dark:text-gray-200">
+                    Adjust font, spacing, and width to suit your eyes. These settings apply across article pages and the daily feed so every story feels comfortable.
+                  </p>
+                  <p style={typographyPreview.paragraph} className="text-gray-700 dark:text-gray-200">
+                    Try widening the column for immersive reading or keep it narrow for quick scanning.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
 
