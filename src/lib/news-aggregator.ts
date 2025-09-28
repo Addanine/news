@@ -354,8 +354,34 @@ function cleanArticleContent(rawContent: string): string {
     /^Image \d+:.*$/gm,
     /^Support\s\$*.$/gm,
     /^View image in fullscreen.*$/gm,
-    /^\s*\*\s*\[.*\]\(.*\)\s*$/gm,
-    /^\[[^\]]*?\]\(https?:\/\/(?:www\.)?theguardian\.com[^\)]*?\)$/gm
+    /^\s*\*\s*\[.*]\(.*\)\s*$/gm,
+    /^\[[^\]]*?]\(https?:\/\/(?:www\.)?theguardian\.com[^)]*?\)$/gm,
+    /Support\s\$.*/gm,
+    /Sign up\*\*Privacy Notice:\*\*.*/gm,
+    /Unlock\*\*All-access digital\*\*benefits:.*/gm,
+    /^Related content$/gm,
+    /^Related stories$/gm,
+    /^More from .*$/gm,
+    /^More on .*$/gm,
+    /^-*$/gm,
+    /^Comments\s\(\d*\)$/gm,
+    /^Sort by .*/gm,
+    /^Per page .*/gm,
+    /^### Most viewed.*$/gm,
+    /^Display threads .*$/gm,
+    /^Most viewed$/gm,
+    /^!\[Image \d*: Accepted payment methods.*/gm,
+    /^Displaying threads.*/gm,
+    /^\d*\.\s{3}\[#{4}.*/gm,
+    /^Support once from.*$/gm,
+    /^[A-Z][a-z]*$/gm,
+    /^!\[Continue.*/gm,
+    /^Remind me in.*$/gm,
+    /^View more comments.*$/gm,
+    /^Explore more on.*$/gm,
+    /^Marketing preferences.*$/gm,
+
+
     // Remove Markdown links that are just navigation
   ];
   const stringsToRemove:string[] = [
@@ -380,8 +406,7 @@ function cleanArticleContent(rawContent: string): string {
 "*   [Travel](https://www.theguardian.com/travel)",
 "*   [Money](https://www.theguardian.com/money)",
     "www.theguardian.com",
-    "![Image 6: Accepted payment methods: Visa, Mastercard, American Express and PayPal](https://assets.guim.co.uk/images/acquisitions/2db3a266287f452355b68d4240df8087/payment-methods.png)"
-
+    "At this unsettling time"
 
 ];
 
@@ -395,7 +420,6 @@ function cleanArticleContent(rawContent: string): string {
   console.log(content)
   // Remove multiple consecutive newlines
   content = content.replaceAll(/\n{3,}/g, '\n\n');
-  content = content.replace(/^<em\>/gm, "**")
   // Remove leading/trailing whitespace
   content = content.trim();
 
