@@ -3,11 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useDarkMode } from "~/lib/dark-mode";
 import { getReadingStats, getReadingCalendar, type ReadingStats } from "~/lib/reading-tracker";
 
 export default function InsightsPage() {
-  const { isDark, toggle } = useDarkMode();
   const [stats, setStats] = useState<ReadingStats | null>(null);
   const [calendar, setCalendar] = useState<Map<string, number>>(new Map());
 
@@ -63,19 +61,6 @@ export default function InsightsPage() {
             lift.news
           </Link>
           <div className="flex items-center gap-4">
-            <button
-              onClick={toggle}
-              className="hover:opacity-70 transition-opacity"
-              aria-label="Toggle dark mode"
-            >
-              <Image 
-                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
-                alt={isDark ? 'Light mode' : 'Dark mode'} 
-                width={20} 
-                height={20}
-                className="dark:invert"
-              />
-            </button>
             <Link
               href="/news"
               className="text-sm hover:underline dark:text-white"

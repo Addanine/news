@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Category } from "~/lib/news-aggregator";
-import { useDarkMode } from "~/lib/dark-mode";
 import { trackArticleRead } from "~/lib/reading-tracker";
 import { estimateReadingTime } from "~/lib/reading-time";
 import {
@@ -36,7 +34,6 @@ interface Article {
 
 export default function NewsPage() {
   const router = useRouter();
-  const { isDark, toggle, mounted } = useDarkMode();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -351,21 +348,6 @@ export default function NewsPage() {
               className="text-sm hover:underline dark:text-white"
             >
               search
-            </button>
-            <button
-              onClick={toggle}
-              className="hover:opacity-70 transition-opacity"
-              aria-label="Toggle dark mode"
-            >
-              {mounted && (
-                <Image 
-                  src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
-                  alt={isDark ? 'Light mode' : 'Dark mode'} 
-                  width={20} 
-                  height={20}
-                  className="dark:invert"
-                />
-              )}
             </button>
             <Link
               href="/recommendations"

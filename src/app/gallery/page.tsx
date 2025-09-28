@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { Category } from "~/lib/news-aggregator";
-import { useDarkMode } from "~/lib/dark-mode";
 
 interface Article {
   id: string;
@@ -20,7 +18,6 @@ interface Article {
 }
 
 export default function GalleryPage() {
-  const { isDark, toggle } = useDarkMode();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -91,19 +88,6 @@ export default function GalleryPage() {
             lift.news
           </Link>
           <div className="flex items-center gap-4">
-            <button
-              onClick={toggle}
-              className="hover:opacity-70 transition-opacity"
-              aria-label="Toggle dark mode"
-            >
-              <Image 
-                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
-                alt={isDark ? 'Light mode' : 'Dark mode'} 
-                width={20} 
-                height={20}
-                className="dark:invert"
-              />
-            </button>
             <Link
               href="/recommendations"
               className="text-sm hover:underline dark:text-white"

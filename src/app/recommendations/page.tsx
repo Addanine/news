@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useDarkMode } from "~/lib/dark-mode";
 import type { RecommendationScore } from "~/lib/recommendation-engine";
 import { getRecommendationInsights } from "~/lib/recommendation-engine";
 import { getReadingHistory } from "~/lib/reading-tracker";
 
 export default function RecommendationsPage() {
-  const { isDark, toggle } = useDarkMode();
   const [recommendations, setRecommendations] = useState<RecommendationScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -103,19 +100,6 @@ export default function RecommendationsPage() {
             lift.news
           </Link>
           <div className="flex items-center gap-4">
-            <button
-              onClick={toggle}
-              className="hover:opacity-70 transition-opacity"
-              aria-label="Toggle dark mode"
-            >
-              <Image 
-                src={isDark ? '/icons/sun.svg' : '/icons/moon.svg'} 
-                alt={isDark ? 'Light mode' : 'Dark mode'} 
-                width={20} 
-                height={20}
-                className="dark:invert"
-              />
-            </button>
             <Link
               href="/news"
               className="text-sm hover:underline dark:text-white"
