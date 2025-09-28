@@ -347,6 +347,12 @@ export default function NewsPage() {
           </Link>
           <div className="flex items-center gap-4">
             <button
+              onClick={() => setShowCommandPalette(true)}
+              className="text-sm hover:underline dark:text-white"
+            >
+              search
+            </button>
+            <button
               onClick={toggle}
               className="hover:opacity-70 transition-opacity"
               aria-label="Toggle dark mode"
@@ -447,11 +453,7 @@ export default function NewsPage() {
                 <button
                   onClick={handlePreviousArticle}
                   disabled={currentIndex === 0}
-                  className={`border border-black px-4 py-2 text-sm transition-colors dark:border-gray-700 ${
-                    currentIndex === 0
-                      ? 'cursor-not-allowed opacity-50'
-                      : 'hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700'
-                  }`}
+                  className="border border-black dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm transition-colors hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700"
                 >
                   ← previous
                 </button>
@@ -486,34 +488,6 @@ export default function NewsPage() {
                 >
                   read original
                 </a>
-                <a
-                  href={`https://getpocket.com/save?url=${encodeURIComponent(article.url)}&title=${encodeURIComponent(article.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border border-black dark:border-gray-700 px-4 py-2 text-sm hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700 transition-colors"
-                >
-                  save to pocket
-                </a>
-                <a
-                  href={`https://www.instapaper.com/edit?url=${encodeURIComponent(article.url)}&title=${encodeURIComponent(article.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border border-black dark:border-gray-700 px-4 py-2 text-sm hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700 transition-colors"
-                >
-                  save to instapaper
-                </a>
-                <button
-                  onClick={() => setShowCommandPalette(true)}
-                  className="border border-black dark:border-gray-700 px-4 py-2 text-sm hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700 transition-colors"
-                >
-                  search /
-                </button>
-                <button
-                  onClick={() => setShowShortcuts(true)}
-                  className="border border-black dark:border-gray-700 px-4 py-2 text-sm hover:bg-black hover:text-white dark:text-white dark:hover:bg-gray-700 transition-colors"
-                >
-                  shortcuts ?
-                </button>
                 <span className="text-xs text-gray-600 dark:text-gray-400 ml-auto">
                   {currentIndex + 1} of {totalArticles}
                 </span>
